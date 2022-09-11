@@ -1,0 +1,9 @@
+# Config
+config.ini
+
+# MacOS files
+.DS_Store
+.idea/
+
+# Cache files
+*.pyc
