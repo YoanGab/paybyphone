@@ -2,12 +2,12 @@ import requests
 import json
 
 
-def add_vehicle(bearer_token: str, license_plate: str, type: str = "car") -> bool:
+def add_vehicle(bearer_token: str, license_plate: str, vehicle_type: str = "car") -> bool:
     """
     Add a vehicle to the account
     :param bearer_token: The bearer token
     :param license_plate: The license plate of the vehicle
-    :param type: The type of the vehicle
+    :param vehicle_type: The type of the vehicle
     :return: True if the vehicle has been added, False otherwise
     """
 
@@ -17,7 +17,7 @@ def add_vehicle(bearer_token: str, license_plate: str, type: str = "car") -> boo
         "licensePlate": license_plate,
         "jurisdiction": "",
         "country": "FR",
-        "type": type
+        "type": vehicle_type
     })
     headers: dict = {
         'Authorization': f'Bearer {bearer_token}',

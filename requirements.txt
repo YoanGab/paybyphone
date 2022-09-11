@@ -1,3 +1,6 @@
 sentry-sdk
 requests
 pandas
+google-cloud-storage
+google-cloud-secret-manager
+

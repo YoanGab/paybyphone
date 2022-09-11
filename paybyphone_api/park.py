@@ -10,7 +10,7 @@ config: ConfigParser = ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), '../config.ini'))
 
 
-def park(bearer_token: str, license_plate: str, ) -> bool:
+def park(parking_account: str, bearer_token: str, license_plate: str, ) -> bool:
     """
     Park the vehicle
     :param bearer_token: The bearer token
@@ -18,18 +18,17 @@ def park(bearer_token: str, license_plate: str, ) -> bool:
     :return: True if the vehicle is parked, False otherwise
     """
 
-    PARKING_ACCOUNT: str = config['PAY_BY_PHONE']['PARKING_ACCOUNT']
-    url: str = f"https://consumer.paybyphoneapis.com/parking/accounts/{PARKING_ACCOUNT}/sessions/"
+    url: str = f"https://consumer.paybyphoneapis.com/parking/accounts/{parking_account}/sessions/"
     if not is_vehicle_registered(bearer_token, license_plate):
         time.sleep(3)
         add_vehicle(bearer_token, license_plate)
         time.sleep(2)
 
-    if has_active_parking(bearer_token, license_plate):
+    if has_active_parking(parking_account, bearer_token, license_plate):
         return False
 
     time.sleep(2)
-    quote_id: str = get_quote_id(bearer_token, license_plate)
+    quote_id: str = get_quote_id(parking_account, bearer_token, license_plate)
     time.sleep(2)
     payload: str = json.dumps({
         "expireTime": None,
@@ -42,7 +41,7 @@ def park(bearer_token: str, license_plate: str, ) -> bool:
         "rateOptionId": "75100",
         "startTime": (datetime.utcnow().isoformat() + "Z").split(".")[0],
         "quoteId": quote_id,
-        "parkingAccountId": PARKING_ACCOUNT,
+        "parkingAccountId": parking_account,
     })
 
     headers: dict = {
