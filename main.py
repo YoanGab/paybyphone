@@ -28,7 +28,7 @@ def get_licence_plates() -> list:
     return df['licence_plate'].to_list()
 
 
-def main() -> None:
+def main(event, context):
     """
     Main function
     :return: None
