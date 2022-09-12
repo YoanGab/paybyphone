@@ -3,4 +3,5 @@ requests
 pandas
 google-cloud-storage
 google-cloud-secret-manager
-
+fsspec
+gcsfs
