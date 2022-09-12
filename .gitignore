@@ -9,4 +9,4 @@ config.ini
 *.pyc
 
 # Random files
-license_plates.csv
+licence_plates.csv
