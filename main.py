@@ -8,6 +8,7 @@ from paybyphone_api import login
 from paybyphone_api.park import park
 from cloud_storage import read_file
 from secret_manager import get_secret
+from mail import email
 
 SECRET_MANAGER_PROJECT_ID: str = os.getenv('SECRET_MANAGER_PROJECT_ID')
 BUCKET_NAME: str = os.getenv('BUCKET_NAME', 'paybyphone')
@@ -38,14 +39,26 @@ def main(event, context):
     password: str = get_secret(SECRET_MANAGER_PROJECT_ID, 'paybyphone_password')
     parking_account: str = get_secret(SECRET_MANAGER_PROJECT_ID, 'paybyphone_parking_account')
     bearer_token: str = login(phone_number=phone_number, password=password)
+    plates_parked: dict = {}
     for licence_plate in licence_plates:
         print(f"Parking {licence_plate}", flush=True)
         if park(parking_account, bearer_token, licence_plate):
             print(f"Successfully parked {licence_plate}", flush=True)
+            plates_parked[licence_plate] = True
         else:
             print(f"Failed to park {licence_plate}", flush=True)
+            plates_parked[licence_plate] = False
         time.sleep(10)
 
 
-if __name__ == '__main__':
-    main()
+    email_body: str = f"{'All plates were parked successfully' if all(plates_parked.values()) else 'Some plates failed to park'}\n\n"
+    email_body += "\n".join(
+        [f"{licence_plate} - {status}" for licence_plate, status in plates_parked.items()]
+    )
+
+    email(
+        to=get_secret(SECRET_MANAGER_PROJECT_ID, 'email_recipient'),
+        subject='PayByPhone Parking',
+        body=email_body
+    )
+
