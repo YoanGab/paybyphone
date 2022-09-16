@@ -32,6 +32,8 @@ def get_licence_plates() -> list:
 def main(event, context):
     """
     Main function
+    :param event: The event
+    :param context: The context
     :return: None
     """
     licence_plates: list = get_licence_plates()
@@ -51,9 +53,12 @@ def main(event, context):
         time.sleep(10)
 
 
-    email_body: str = f"{'All plates were parked successfully' if all(plates_parked.values()) else 'Some plates failed to park'}\n\n"
-    email_body += "\n".join(
-        [f"{licence_plate} - {status}" for licence_plate, status in plates_parked.items()]
+    email_body: str = f"{'All plates were parked successfully' if all(plates_parked.values()) else 'Some plates failed to park'}<br><br>"
+    email_body += "<br>".join(
+        [
+            f"{licence_plate} - {'Parked successfully' if plates_parked[licence_plate] else 'Failed to park'}"
+            for licence_plate in plates_parked.keys()
+        ]
     )
 
     email(
@@ -61,4 +66,3 @@ def main(event, context):
         subject='PayByPhone Parking',
         body=email_body
     )
-
